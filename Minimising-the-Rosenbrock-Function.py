@@ -107,7 +107,7 @@ def gradient_descent (start_x, start_y, moving_rate, max_runs=2000000, tol=1e-10
 
         history.append((xg, yg, val))
 
-        if np.linalg.norm([grad_x, grad_y]) < tol:  # close enough: stop and report
+        if val < tol:  # close enough: stop and report
              return xg, yg, val, history, i
         if not np.isfinite(val) or val > 1e20: # blew up: step size too large
             return xg, yg, val, history, None
@@ -119,29 +119,29 @@ for corner in Corners:
     x_opt, y_opt, f_opt, history, iterations = gradient_descent(corner[0], corner[1], moving_rate=1e-6)
     history = np.array(history)
 
-    plt.figure(figsize=(8, 6))
+    # plt.figure(figsize=(8, 6))
 
-    # Background: Rosenbrock heatmap (reuses X, Y, Z from the top of your script)
-    plt.pcolormesh(X, Y, Z, cmap='plasma', shading='auto')
-    plt.colorbar(label='f(x, y)')
+    # # Background: Rosenbrock heatmap (reuses X, Y, Z from the top of your script)
+    # plt.pcolormesh(X, Y, Z, cmap='plasma', shading='auto')
+    # plt.colorbar(label='f(x, y)')
 
-    # Overlay: gradient descent path
-    plt.plot(history[:, 0], history[:, 1], '-o', color='white',
-             markersize=2, linewidth=1, label='Descent path')
+    # # Overlay: gradient descent path
+    # plt.plot(history[:, 0], history[:, 1], '-o', color='white',
+    #          markersize=2, linewidth=1, label='Descent path')
 
-    # Mark the start and end points
-    plt.plot(corner[0], corner[1], 'go', markersize=8, label='Start')
-    plt.plot(x_opt, y_opt, 'r*', markersize=12, label='End')
+    # # Mark the start and end points
+    # plt.plot(corner[0], corner[1], 'go', markersize=8, label='Start')
+    # plt.plot(x_opt, y_opt, 'r*', markersize=12, label='End')
 
-    # Keep the view locked to the original grid range
-    plt.xlim(Xrange)
-    plt.ylim(Yrange)
+    # # Keep the view locked to the original grid range
+    # plt.xlim(Xrange)
+    # plt.ylim(Yrange)
 
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.title(f"Gradient Descent Path for {corner}")
-    plt.legend()
-    plt.show()
+    # plt.xlabel('x')
+    # plt.ylabel('y')
+    # plt.title(f"Gradient Descent Path for {corner}")
+    # plt.legend()
+    # plt.show()
 
     print(
         f"Start: {corner}, "
@@ -181,47 +181,122 @@ print(newton(-2, -1)[:3])     # end x, end y, end value
 
 # ----- Plot the path a method takes -----
 
-def plot_path(history, title):
-    path = np.array(history)              # each row is (x, y, f-value)
-    px, py = path[:, 0], path[:, 1]       # all x's, all y's along the path
+# def plot_path(history, title):
+#     path = np.array(history)              # each row is (x, y, f-value)
+#     px, py = path[:, 0], path[:, 1]       # all x's, all y's along the path
 
-    plt.figure(figsize=(8, 6))
+#     plt.figure(figsize=(8, 6))
 
-    # Background map. log10 squashes the huge range of values so the narrow
-    # valley is visible. The 1e-3 stops log10 from choking on a value of 0.
-    plt.contourf(X, Y, np.log10(Z + 1e-3), levels=40, cmap='plasma')
-    plt.colorbar(label='log10( f(x, y) )')
+#     # Background map. log10 squashes the huge range of values so the narrow
+#     # valley is visible. The 1e-3 stops log10 from choking on a value of 0.
+#     plt.contourf(X, Y, np.log10(Z + 1e-3), levels=40, cmap='plasma')
+#     plt.colorbar(label='log10( f(x, y) )')
 
-    plt.plot(px, py, 'w.-', linewidth=1.5, markersize=8, label='path')
-    plt.plot(px[0], py[0], 'go', markersize=10, label='start')
-    plt.plot(1, 1, 'r*', markersize=16, label='true minimum (1, 1)')
+#     plt.plot(px, py, 'w.-', linewidth=1.5, markersize=8, label='path')
+#     plt.plot(px[0], py[0], 'go', markersize=10, label='start')
+#     plt.plot(1, 1, 'r*', markersize=16, label='true minimum (1, 1)')
 
-    plt.xlim(-2, 2)
-    plt.ylim(-1, 3)
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.title(title)
-    plt.legend(loc='upper left')
-    plt.show()
+#     plt.xlim(-2, 2)
+#     plt.ylim(-1, 3)
+#     plt.xlabel('x')
+#     plt.ylabel('y')
+#     plt.title(title)
+#     plt.legend(loc='upper left')
+#     plt.show()
 
 # ----- Run Newton's method from each corner and plot it -----
 
 for corner in Corners:
     xn, yn, val, history, iters = newton(corner[0], corner[1])
     print('start', corner, '-> ended at', (xn, yn), ' iterations:', iters)
-    plot_path(history, f"Newton's method, start {corner} ({iters} iterations)")
+    # plot_path(history, f"Newton's method, start {corner} ({iters} iterations)")
 
 
-plt.figure(figsize=(8, 6))
-plt.contourf(X, Y, np.log10(Z + 1e-3), levels=40, cmap='plasma')
-colors = ['white', 'cyan', 'lime', 'yellow']
-for corner, c in zip(Corners, colors):
-    _, _, _, history, iters = newton(corner[0], corner[1])
-    path = np.array(history)
-    plt.plot(path[:, 0], path[:, 1], '.-', color=c, label=f'start {corner}')
-plt.plot(1, 1, 'r*', markersize=16)
-plt.xlim(-2, 2); plt.ylim(-1, 3)
-plt.legend(); plt.show()
+# plt.figure(figsize=(8, 6))
+# plt.contourf(X, Y, np.log10(Z + 1e-3), levels=40, cmap='plasma')
+# colors = ['white', 'cyan', 'lime', 'yellow']
+# for corner, c in zip(Corners, colors):
+#     _, _, _, history, iters = newton(corner[0], corner[1])
+#     path = np.array(history)
+#     plt.plot(path[:, 0], path[:, 1], '.-', color=c, label=f'start {corner}')
+# plt.plot(1, 1, 'r*', markersize=16)
+# plt.xlim(-2, 2); plt.ylim(-1, 3)
+# plt.legend(); plt.show()
 
 # ----- Nelder-Mead ----- (Tuesday 10/20)
 
+def nelder_mead(start_x, start_y, size=0.5, max_runs=5000, tol=1e-10):
+    start = np.array([start_x, start_y], dtype=float)
+    # Triangle: the start point plus one point nudged in x and one nudged in y
+    simplex = np.array([start, start + [size, 0], start + [0, size]])
+    history = []
+
+    for i in range(1, max_runs + 1):
+        # Sort corners: best (lowest altitude) first, worst last
+        vals = np.array([func(v) for v in simplex])
+        order = np.argsort(vals)
+        simplex = simplex[order]
+        vals = vals[order]
+
+        best = simplex[0]
+        history.append((best[0], best[1], vals[0]))   # record the best corner
+
+        if vals[0] < tol:                             # close enough: stop and report
+            return best[0], best[1], vals[0], history, i
+
+        centroid = simplex[:-1].mean(axis=0)          # middle of the two best corners
+        worst = simplex[-1]
+
+        refl = centroid + (centroid - worst)          # 1. reflect
+        f_refl = func(refl)
+
+        if vals[0] <= f_refl < vals[1]:               # 3. okay: keep the reflection
+            simplex[-1] = refl
+        elif f_refl < vals[0]:                        # 2. new best: try expanding
+            expand = centroid + 2 * (centroid - worst)
+            simplex[-1] = expand if func(expand) < f_refl else refl
+        else:                                         # 4. bad: try contracting
+            contract = centroid + 0.5 * (worst - centroid)
+            if func(contract) < vals[-1]:
+                simplex[-1] = contract
+            else:                                     # 5. shrink toward the best corner
+                simplex[1:] = best + 0.5 * (simplex[1:] - best)
+
+    return best[0], best[1], vals[0], history, None   # never got there
+
+for corner in Corners:
+    xn, yn, val, history, iters = nelder_mead(corner[0], corner[1])
+    print('start', corner, '-> ended at', (xn, yn), ' iterations:', iters)
+    # plot_path(history, f"Nelder-Mead, start {corner} ({iters} iterations)")
+
+    
+# ----- Plot all 4 corners for one method in a single figure -----
+
+def plot_four(method, name, **kwargs):
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10), constrained_layout=True)
+
+    for ax, corner in zip(axes.flat, Corners):         # one panel per corner
+        # Run the method. **kwargs passes extras (like moving_rate) through.
+        xe, ye, val, history, iters = method(corner[0], corner[1], **kwargs)
+        path = np.array(history)
+
+        cf = ax.contourf(X, Y, np.log10(Z + 1e-3), levels=40, cmap='plasma')
+        ax.plot(path[:, 0], path[:, 1], 'w.-', linewidth=1, markersize=3)
+        ax.plot(corner[0], corner[1], 'go', markersize=9, label='start')
+        ax.plot(1, 1, 'r*', markersize=14, label='minimum (1, 1)')
+
+        ax.set_xlim(-2, 2)
+        ax.set_ylim(-1, 3)
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+        ax.set_title(f"start {corner}: {iters} iterations")
+        ax.legend(loc='upper left', fontsize=8)
+
+    fig.colorbar(cf, ax=axes.ravel().tolist(), label='log10( f(x, y) )')
+    fig.suptitle(name, fontsize=14)
+    # Note: no plt.show() here, so you can open several figures at once
+
+plot_four(gradient_descent, "Gradient descent", moving_rate=1e-3)
+plot_four(newton, "Newton's method")
+plot_four(nelder_mead, "Nelder-Mead")
+plt.show()      # one show at the end opens all three windows together
